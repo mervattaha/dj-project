@@ -1,20 +1,27 @@
 {% extends 'base.twig' %}
 
 {% block content %}
-    <h1>DJs in {% if city %}{{ city }}{% else %}{{ country }}{% endif %}</h1>
-    {% if djs is not empty %}
-        <div class="djs-list">
-            {% for dj in djs %}
-                <div class="dj-card">
-                    <img src="{{ dj.image }}" alt="{{ dj.name }}">
-                    <h2>{{ dj.name }}</h2>
-                    <p>Genre: {{ dj.genre }}</p>
-                    <p>Price: ${{ dj.price }}</p>
-                    <p>{{ dj.description }}</p>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No DJs found in this location.</p>
-    {% endif %}
+    <div class="container mt-5">
+        <h1>DJs in {% if city %}{{ city }}{% else %}{{ country }}{% endif %}</h1>
+        {% if djs is not empty %}
+            <div class="row">
+                {% for dj in djs %}
+                    <div class="col-md-4">
+                        <div class="card mb-4">
+                            <img src="{{ dj.image }}" class="card-img-top" alt="{{ dj.name }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ dj.name }}</h5>
+                                <p class="card-text"><strong>Genre:</strong> {{ dj.genre }}</p>
+                                <p class="card-text"><strong>Price:</strong> ${{ dj.price }}</p>
+                                <p class="card-text">{{ dj.description }}</p>
+                                <a href="#" class="btn btn-primary">Book Now</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No DJs found in this location.</p>
+        {% endif %}
+    </div>
 {% endblock %}
