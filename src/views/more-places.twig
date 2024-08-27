@@ -1,0 +1,51 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center mb-4">Countries</h1>
+    <h2 class="text-center mb-4">Discover DJs Around the Globe</h2>
+    <p class="lead text-center mb-4">Explore talented DJs available in various countries and find the perfect match for your event.</p>
+
+<div class="row">
+    <!-- Search Form -->
+    <div class="col-md-12 mb-3">
+        <form action="/search-countries" method="GET" class="search-form">
+            <input type="text" name="query" placeholder="City, etc" class="search-input">
+            <button type="submit" class="search-button">Find artists</button>
+        </form>
+    </div>
+    <div class="d-flex flex-wrap justify-content-center mb-5">
+        {% for country in countries %}
+            <div class="country-card mx-2 mb-4" style="flex: 1 1 250px; max-width: 250px;">
+                <a href="/locations/{{ country.country_code }}" class="text-decoration-none">
+                    <div class="card border-light shadow-sm">
+                        <div class="card-body d-flex align-items-center">
+                            <i class="fas fa-globe fa-2x me-3"></i>
+                            <div>
+                                <h5 class="card-title mb-1">{{ country.country_name }}</h5>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h2 class="text-center mb-4">Nearby Cities</h2>
+<div class="row mb-5">
+    {% for city in cities %}
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center">
+            <div class="card border-light shadow-lg" style="width: 100%; max-width: 280px;">
+                <div class="card-body">
+                    <h5 class="card-title mb-2">{{ city.city_name }}</h5>
+                    <p class="card-text mb-3">
+                        <strong>Distance:</strong> {{ city.distance|number_format(2) }} km away
+                    </p>
+                    <a href="/locations/{{ city.country_code }}" class="btn btn-outline-primary w-100">Explore DJs</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

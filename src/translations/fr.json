@@ -1,0 +1,78 @@
+{
+    "welcome_message": "Bienvenue sur notre service de réservation de DJ",
+    "explore_djs": "Découvrez nos DJs et trouvez le meilleur pour votre événement",
+    "featured_djs": "DJs en vedette",
+    "view_profile": "Voir le profil",
+    "no_djs": "Aucun DJ disponible",
+    "event_categories": "Catégories d'événements",
+    "explore_categories": "Parcourez nos catégories d'événements pour trouver la meilleure correspondance pour vos besoins :",
+    "weddings": "Mariages",
+    "weddings_description": "Planifiez un mariage parfait avec les meilleurs DJs.",
+    "explore_weddings": "Explorez les mariages",
+    "corporate_events": "Événements d'entreprise",
+    "corporate_events_description": "Rendez votre événement d'entreprise réussi avec les meilleurs DJs.",
+    "explore_corporate_events": "Explorez les événements d'entreprise",
+    "nightlife_club_events": "Événements nocturnes & Clubs",
+    "nightlife_club_events_description": "Ajoutez de l'énergie à vos soirées en club avec les meilleurs DJs.",
+    "explore_nightlife_club_events": "Explorez les événements nocturnes & clubs",
+    "private_parties": "Fêtes privées",
+    "private_parties_description": "Organisez des fêtes privées inoubliables avec nos meilleurs DJs.",
+    "explore_private_parties": "Explorez les fêtes privées",
+    "festivals_large_scale_events": "Festivals & Événements de grande envergure",
+    "festivals_large_scale_events_description": "Élevez vos festivals avec nos DJs qualifiés.",
+    "explore_festivals_large_scale_events": "Explorez les festivals & événements de grande envergure",
+    "graduation_parties": "Fêtes de fin d'études",
+    "graduation_parties_description": "Célébrez votre diplôme avec le mix musical parfait.",
+    "explore_graduation_parties": "Explorez les fêtes de fin d'études",
+    "school_university_events": "Événements scolaires & universitaires",
+    "school_university_events_description": "Rendez votre événement scolaire mémorable avec nos DJs.",
+    "explore_school_university_events": "Explorez les événements scolaires & universitaires",
+    "childrens_parties": "Fêtes pour enfants",
+    "childrens_parties_description": "Musique amusante pour les fêtes et événements pour enfants.",
+    "explore_childrens_parties": "Explorez les fêtes pour enfants",
+    "charity_events": "Événements caritatifs",
+    "charity_events_description": "Soutenez votre cause avec une musique inspirante.",
+    "explore_charity_events": "Explorez les événements caritatifs",
+    "cultural_religious_events": "Événements culturels & religieux",
+    "cultural_religious_events_description": "Musique adaptée aux célébrations culturelles et religieuses.",
+    "explore_cultural_religious_events": "Explorez les événements culturels & religieux",
+    "funerals_memorial_services": "Funérailles & Services commémoratifs",
+    "funerals_memorial_services_description": "Créez une atmosphère respectueuse avec une musique appropriée.",
+    "explore_funerals_memorial_services": "Explorez les funérailles & services commémoratifs",
+    "sports_events": "Événements sportifs",
+    "sports_events_description": "Augmentez l'énergie de votre événement sportif avec nos DJs.",
+    "explore_sports_events": "Explorez les événements sportifs",
+    "virtual_events": "Événements virtuels",
+    "virtual_events_description": "Donnez vie à votre événement virtuel avec une excellente musique.",
+    "explore_virtual_events": "Explorez les événements virtuels",
+    "fashion_events": "Événements de mode",
+    "fashion_events_description": "Musique élégante pour des événements à la mode.",
+    "explore_fashion_events": "Explorez les événements de mode",
+    "seasonal_holiday_events": "Événements saisonniers & vacances",
+    "seasonal_holiday_events_description": "Célébrez les saisons avec de la musique adaptée à l'occasion.",
+    "explore_seasonal_holiday_events": "Explorez les événements saisonniers & vacances",
+
+ 
+        "available_djs": "DJs Disponibles",
+
+
+   
+    "browse_categories": "Parcourez nos catégories d'événements pour trouver ce qui convient le mieux à vos besoins :",
+    
+    "dj_profile": "Profil DJ",
+    "book_now": "Réservez maintenant",
+    "error_404": "404 Non trouvé",
+
+   
+        "contact_us": "Contactez-nous",
+        "name": "Nom",
+        "email": "Email",
+        "subject": "Sujet",
+        "message": "Message",
+        "send": "Envoyer",
+
+        "about_us": "À propos de nous",
+        "about_us_description": "Nous sommes une entreprise dédiée à vous aider à trouver le DJ parfait pour tout événement."
+    }
+    
+

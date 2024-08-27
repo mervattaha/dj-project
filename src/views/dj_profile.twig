@@ -1,0 +1,10 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+<h1>{{ dj.name }}</h1>
+<img src="{{ dj.image }}" class="img-fluid" alt="{{ dj.name }}">
+<p>Genre: {{ dj.genre }}</p>
+<p>Price: ${{ dj.price }} per hour</p>
+<p>{{ dj.description }}</p>
+<a href="/book?id={{ dj.id }}" class="btn btn-success">Book Now</a>
+{% endblock %}

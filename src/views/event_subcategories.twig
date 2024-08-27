@@ -1,0 +1,12 @@
+{% extends 'base.twig' %}
+
+{% block content %}
+<h1>{{ category.name }}</h1>
+<ul class="list-group">
+    {% for subcategory in subcategories %}
+    <li class="list-group-item">
+        <a href="/event_categories/{{ category.slug }}/{{ subcategory.slug }}">{{ subcategory.name }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
