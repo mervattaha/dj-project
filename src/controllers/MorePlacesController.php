@@ -1,29 +1,30 @@
 <?php
-class MorePlacesController {
-    private $twig;
-    private $pdo;
+namespace App\Controllers;
 
-    public function __construct($twig, $pdo) {
-        $this->twig = $twig;
-        $this->pdo = $pdo;
-    }
+use App\Controllers\BaseController;
+use PDO;
+use PDOException;
+use Exception;
 
-    public function showMorePlaces() {
+class MorePlacesController extends BaseController
+{
+    public function showMorePlaces()
+    {
         try {
-            // Get user location
+            // الحصول على موقع المستخدم
             $userLocation = $this->getUserLocation();
-    
-            // Fetch nearby cities
+
+            // جلب المدن القريبة
             $cities = $this->getNearbyCities($userLocation);
-    
-            // Fetch top locations
-            $topLocations = $this->getTopLocations(); 
-    
-            // Fetch countries
+
+            // جلب المواقع المميزة
+            $topLocations = $this->getTopLocations();
+
+            // جلب الدول
             $countries = $this->getCountries();
-    
-            // Render the view with nearby cities, top locations, and countries
-            echo $this->twig->render('more-places.twig', [
+
+            // عرض القالب مع المدن القريبة، المواقع المميزة، والدول
+            $this->renderWithFooter('more-places.twig', [
                 'topLocations' => $topLocations,
                 'cities' => $cities,
                 'countries' => $countries
@@ -33,20 +34,26 @@ class MorePlacesController {
         }
     }
 
-    private function getUserLocation() {
-        // Example static location; replace with actual location logic
-        return ['latitude' => 30.0444, 'longitude' => 31.2357]; // Cairo, for example
+    public function getUserLocation()
+    {
+        // موقع ثابت كمثال؛ استبدله بمنطق الموقع الفعلي
+        return ['latitude' => 30.0444, 'longitude' => 31.2357]; // القاهرة، على سبيل المثال
     }
 
-    private function getNearbyCities($userLocation) {
+    public function getNearbyCities($userLocation)
+    {
         $latitude = $userLocation['latitude'];
         $longitude = $userLocation['longitude'];
     
         try {
             $stmt = $this->pdo->prepare("
-                SELECT DISTINCT city_name, country_code, latitude, longitude,
-                ( (latitude - :lat) * (latitude - :lat) + (longitude - :long) * (longitude - :long) ) AS distance
+                SELECT city_name, country_code, latitude, longitude,
+                (6371 * ACOS(
+                    COS(RADIANS(:lat)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(:long)) +
+                    SIN(RADIANS(:lat)) * SIN(RADIANS(latitude))
+                )) AS distance
                 FROM cities
+                HAVING distance < 50
                 ORDER BY distance
                 LIMIT 10
             ");
@@ -55,25 +62,18 @@ class MorePlacesController {
                 ':long' => $longitude
             ]);
     
-            $cities = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-            // Remove duplicates in PHP (if needed)
-            $uniqueCities = [];
-            foreach ($cities as $city) {
-                $cityKey = $city['city_name'] . $city['country_code'];
-                if (!isset($uniqueCities[$cityKey])) {
-                    $uniqueCities[$cityKey] = $city;
-                }
-            }
-    
-            return array_values($uniqueCities);
         } catch (PDOException $e) {
-            echo "Database error: " . $e->getMessage();
+            // سجل الخطأ بدلاً من عرضه
+            error_log("Database error: " . $e->getMessage());
             return [];
         }
     }
     
-    private function getTopLocations() {
+
+    private function getTopLocations()
+    {
         try {
             $stmt = $this->pdo->query("SELECT city_name, city_slug FROM top_locations");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -82,9 +82,9 @@ class MorePlacesController {
             return [];
         }
     }
-    
 
-    private function getCountries() {
+    private function getCountries()
+    {
         try {
             $stmt = $this->pdo->query("SELECT country_name, country_code FROM countries");
             return $stmt->fetchAll(PDO::FETCH_ASSOC);

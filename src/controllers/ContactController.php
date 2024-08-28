@@ -1,16 +1,9 @@
 <?php
 
-class ContactController
+namespace App\Controllers;
+
+class ContactController extends BaseController
 {
-    private $pdo;
-    private $twig;
-
-    public function __construct($pdo, $twig)
-    {
-        $this->pdo = $pdo;
-        $this->twig = $twig;
-    }
-
     public function showContactForm()
     {
         echo $this->twig->render('contact.twig');

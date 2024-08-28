@@ -3,18 +3,20 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-require '../includes/Router.php'; // تأكد من صحة المسار
-require '../vendor/autoload.php';
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../includes/Router.php';
+require_once __DIR__ . '/../src/utilities.php';
+
+use App\Router;
+use App\Controllers\BookController;
+use App\Controllers\CategoryController;
+use App\Controllers\ContactController;
+use App\Controllers\MorePlacesController;
+use App\Controllers\DJController;
 
 // التأكد من تحميل ملفات الموديلات والمراقبين مرة واحدة فقط
 require_once '../src/models/Booking.php';
-require_once '../src/controllers/BookController.php';
-require_once '../src/controllers/DJController.php';
-require_once '../src/controllers/CategoryController.php';
-require_once '../src/utilities.php';
 require_once '../src/setup.php'; // تأكد من أنه لا يحتوي على تعريف دالة مكررة
-require_once '../src/controllers/ContactController.php';
-require_once '../src/controllers/MorePlacesController.php';
 
 // تحميل الترجمة بناءً على اللغة المحددة
 $language = $_GET['lang'] ?? 'en'; // افتراض اللغة الإنجليزية إذا لم يتم تحديدها
@@ -27,6 +29,11 @@ $twig = new \Twig\Environment($loader, [
     'debug' => true,  // تفعيل وضع التصحيح إذا لزم الأمر
 ]);
 $twig->addGlobal('translations', $translations);
+
+// الحصول على قائمة المدن
+$stmt = $pdo->query('SELECT DISTINCT city FROM djs ORDER BY city');
+$cities = $stmt->fetchAll(PDO::FETCH_COLUMN);
+$twig->addGlobal('cities', $cities);
 
 // إعداد قاعدة البيانات
 try {
@@ -144,6 +151,7 @@ $router->add('/more-places', function() use ($twig, $pdo) {
     $controller = new MorePlacesController($twig, $pdo);
     $controller->showMorePlaces();
 });
+
 // المسار لعرض DJs بناءً على المدينة
 $router->add('/djs/city/{city}', function($city) use ($twig, $pdo) {
     try {

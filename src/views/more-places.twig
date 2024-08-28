@@ -32,7 +32,15 @@
     </div>
 
     <h2 class="text-center mb-4">Nearby Cities</h2>
+    <ul>
+    {% for city in cities %}
+        <li>{{ city.city }} ({{ city.latitude }}, {{ city.longitude }})</li>
+    {% else %}
+        <li>No nearby cities found.</li>
+    {% endfor %}
+</ul>
 <div class="row mb-5">
+
     {% for city in cities %}
         <div class="col-sm-6 col-md-4 col-lg-3 mb-4 d-flex justify-content-center">
             <div class="card border-light shadow-lg" style="width: 100%; max-width: 280px;">

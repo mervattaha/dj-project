@@ -1,4 +1,6 @@
 <?php
+namespace App\Controllers;
+use PDO; 
 class CategoryController {
     private $twig;
     private $pdo;

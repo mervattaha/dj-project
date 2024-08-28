@@ -1,0 +1,56 @@
+/* footer.css */
+
+/* تنسيق الفوتر العام */
+.footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    border-top: 1px solid #e9ecef;
+    text-align: center;
+    font-size: 0.875rem;
+}
+
+/* تنسيق روابط الفوتر */
+.footer a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}
+
+/* تنسيق أقسام الفوتر */
+.footer .top-locations,
+.footer .app-download,
+.footer .social-media,
+.footer .resources {
+    margin-bottom: 20px;
+}
+
+/* تنسيق قائمة المواقع المميزة */
+.footer .top-locations ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer .top-locations ul li {
+    margin: 0;
+}
+
+/* تنسيق قسم تحميل التطبيق */
+.footer .app-download a {
+    margin: 0 5px;
+    display: inline-block;
+}
+
+/* تنسيق روابط الوسائط الاجتماعية */
+.footer .social-media a {
+    margin: 0 5px;
+}
+
+/* تنسيق قسم الموارد */
+.footer .resources a {
+    display: block;
+    margin: 5px 0;
+}
