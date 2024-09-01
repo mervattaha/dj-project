@@ -25,29 +25,5 @@
         {% endif %}
     </div>
 
-    <!-- عرض المدن القريبة -->
-    <div class="container mt-5">
-        <h2>Nearby Cities</h2>
-        {% if cities is not empty %}
-            <ul class="list-group">
-                {% for city in cities %}
-                    <li class="list-group-item">
-                        <a href="/djs/by-city/{{ city.city_name }}">{{ city.city_name }}</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% else %}
-            <p>No nearby cities available.</p>
-        {% endif %}
-    </div>
-    {% if cities is defined %}
-    <h2>Nearby Cities</h2>
-    <ul>
-        {% for city in cities %}
-            <li>{{ city.city_name }} - {{ city.distance }} km</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No cities data available.</p>
-{% endif %}
+   
 {% endblock %}

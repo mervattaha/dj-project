@@ -1,9 +1,9 @@
 <?php
 namespace App\Models;
 
-use \Exception;
+use Exception;
 
-class Booking {
+class booking {
     private $pdo;
 
     public function __construct($pdo) {
@@ -38,3 +38,4 @@ class Booking {
         }
     }
 }
+
