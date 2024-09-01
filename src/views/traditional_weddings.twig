@@ -1,26 +1,15 @@
 {% extends 'base.twig' %}
 
 {% block content %}
-<div class="subcategory">
-    <h1>Traditional Weddings</h1>
-    <p>Details about the subcategory...</p>
-
-    <!-- Traditional Weddings -->
-    <div class="row">
-        {% for dj in djs %}
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <img src="{{ dj.image }}" class="card-img-top" alt="{{ dj.name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ dj.name }}</h5>
-                        <p class="card-text">{{ dj.description }}</p>
-                        <a href="/dj?id={{ dj.id }}" class="btn btn-primary">{{ translations['view_profile'] }}</a>
-                    </div>
-                </div>
-            </div>
-        {% else %}
-            <p>{{ translations['no_djs'] }}</p>
-        {% endfor %}
-    </div>
-</div>
+    <h1>{{ translations['traditional_weddings'] }}</h1>
+    <p>{{ translations['details_about_subcategory'] }}</p>
+    {% if djs is empty %}
+        <p>{{ translations['no_djs_available'] }}</p>
+    {% else %}
+        <ul>
+            {% for dj in djs %}
+                <li>{{ dj.name }} - {{ dj.city }}, {{ dj.country_name }} - {{ dj.price }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
 {% endblock %}

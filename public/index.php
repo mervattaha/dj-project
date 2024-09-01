@@ -13,6 +13,8 @@ use App\Controllers\CategoryController;
 use App\Controllers\ContactController;
 use App\Controllers\MorePlacesController;
 use App\Controllers\DJController;
+use App\Controllers\TraditionalWeddingsController;
+
 
 // التأكد من تحميل ملفات الموديلات والمراقبين مرة واحدة فقط
 require_once '../src/models/Booking.php';
@@ -37,6 +39,8 @@ $twig = new \Twig\Environment($loader, [
     'debug' => true,  // تفعيل وضع التصحيح إذا لزم الأمر
 ]);
 $twig->addGlobal('translations', $translations);
+
+// code that gets the lat and lon
 
 // الحصول على قائمة المدن
 $cities = LocationHelper::getNearbyCities($pdo,['latitude' => 30.0444, 'longitude' => 31.2357]);
@@ -165,6 +169,22 @@ $router->get('/djs/city/{city}', function($city) use ($twig, $pdo) {
         echo "Error: " . $e->getMessage();
     }
 });
+
+
+$router->get('/traditional-weddings/{subcategorySlug}', function($subcategorySlug) use ($twig, $pdo) {
+    $controller = new TraditionalWeddingsController($twig, $pdo);
+    $controller->showSubcategory($subcategorySlug);
+});
+
+
+
+$router->get('/traditional-weddings', function() use ($twig, $pdo) {
+    $controller = new TraditionalWeddingsController($twig, $pdo);
+    $language = $_GET['lang'] ?? 'en'; // Default to 'en' if not specified
+    $controller->showTraditionalWeddings($language);
+});
+
+
 
 // المسار لعرض DJs بناءً على الدولة
 $router->get('/djs/country/{country}', function($country) use ($twig, $pdo) {

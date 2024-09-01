@@ -30,9 +30,6 @@ class CategoryController {
             $stmt = $this->pdo->prepare('SELECT * FROM event_categories WHERE slug = :slug');
             $stmt->execute(['slug' => $categorySlug]);
             $category = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            var_dump( $categorySlug );
-            die();
     
             if ($category) {
                 // Get the subcategories for the retrieved category
