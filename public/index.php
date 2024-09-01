@@ -4,10 +4,10 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../includes/Router.php';
 require_once __DIR__ . '/../src/utilities.php';
+require_once __DIR__ . '/../src/LocationHelper.php';
 
-use App\Router;
+use Bramus\Router\Router;
 use App\Controllers\BookController;
 use App\Controllers\CategoryController;
 use App\Controllers\ContactController;
@@ -17,6 +17,14 @@ use App\Controllers\DJController;
 // التأكد من تحميل ملفات الموديلات والمراقبين مرة واحدة فقط
 require_once '../src/models/Booking.php';
 require_once '../src/setup.php'; // تأكد من أنه لا يحتوي على تعريف دالة مكررة
+
+// إعداد قاعدة البيانات
+try {
+    $pdo = new PDO('sqlite:../src/database/cueup.sqlite');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Database connection failed: " . $e->getMessage());
+}
 
 // تحميل الترجمة بناءً على اللغة المحددة
 $language = $_GET['lang'] ?? 'en'; // افتراض اللغة الإنجليزية إذا لم يتم تحديدها
@@ -31,23 +39,14 @@ $twig = new \Twig\Environment($loader, [
 $twig->addGlobal('translations', $translations);
 
 // الحصول على قائمة المدن
-$stmt = $pdo->query('SELECT DISTINCT city FROM djs ORDER BY city');
-$cities = $stmt->fetchAll(PDO::FETCH_COLUMN);
+$cities = LocationHelper::getNearbyCities($pdo,['latitude' => 30.0444, 'longitude' => 31.2357]);
 $twig->addGlobal('cities', $cities);
 
-// إعداد قاعدة البيانات
-try {
-    $pdo = new PDO('sqlite:../src/database/cueup.sqlite');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
-}
-
-// إعداد الروتر مع تمرير Twig و PDO
-$router = new Router($twig, $pdo);
+// إعداد الروتر باستخدام Bramus Router
+$router = new Router();
 
 // المسار للصفحة الرئيسية
-$router->add('/', function() use ($twig, $pdo) {
+$router->get('/', function() use ($twig, $pdo) {
     try {
         // استرجع DJs المميزين من الجدول المنفصل
         $statement = $pdo->query('
@@ -66,7 +65,7 @@ $router->add('/', function() use ($twig, $pdo) {
 });
 
 // المسار لصفحة قائمة DJs
-$router->add('/djs', function() use ($twig, $pdo) {
+$router->get('/djs', function() use ($twig, $pdo) {
     try {
         $statement = $pdo->query('SELECT * FROM djs');
         if (!$statement) {
@@ -80,7 +79,7 @@ $router->add('/djs', function() use ($twig, $pdo) {
 });
 
 // المسار لصفحة ملف تعريف DJ معين
-$router->add('/dj', function() use ($twig, $pdo) {
+$router->get('/dj', function() use ($twig, $pdo) {
     if (isset($_GET['id'])) {
         try {
             $statement = $pdo->prepare('SELECT * FROM djs WHERE id = :id');
@@ -101,59 +100,61 @@ $router->add('/dj', function() use ($twig, $pdo) {
 });
 
 // المسار لنموذج الحجز
-$router->add('/book', function() use ($twig, $pdo) {
+$router->get('/book', function() use ($twig, $pdo) {
     $bookController = new BookController($twig, $pdo);
     $bookController->showBookingForm();
 });
 
 // المسار لمعالجة الحجز
-$router->add('/book-process', function() use ($twig, $pdo) {
+$router->post('/book-process', function() use ($twig, $pdo) {
     $bookController = new BookController($twig, $pdo);
     $bookController->processBooking();
 });
 
 // المسار للفئات والفئات الفرعية
-$router->add('/event_categories', function() use ($twig, $pdo) {
+$router->get('/event_categories', function() use ($twig, $pdo) {
     $categoryController = new CategoryController($twig, $pdo);
     $categoryController->showCategories();
 });
 
-$router->add('/event_categories/{categorySlug}', function($categorySlug) use ($twig, $pdo) {
-    $categoryController = new CategoryController($twig, $pdo);
-    $categoryController->showSubcategories($categorySlug);
-});
-
-$router->add('/event_categories/{categorySlug}/{subcategorySlug}', function($categorySlug, $subcategorySlug) use ($twig, $pdo) {
+$router->get('/event_categories/{categorySlug}/{subcategorySlug}', function($categorySlug, $subcategorySlug) use ($twig, $pdo) {
     $categoryController = new CategoryController($twig, $pdo);
     $categoryController->showSubcategory($categorySlug, $subcategorySlug);
 });
 
+$router->get('/event_categories/{categorySlug}', function($categorySlug) use ($twig, $pdo) {
+    $categoryController = new CategoryController($twig, $pdo);
+    $categoryController->showSubcategories($categorySlug);
+});
+
+
+
 // المسار لصفحة "اتصل بنا"
-$router->add('/contact', function() use ($twig, $pdo, $language) {
+$router->get('/contact', function() use ($twig, $pdo, $language) {
     $translations = loadTranslations($language); // استخدم اللغة الحالية هنا
     echo $twig->render('contact.twig', ['translations' => $translations]);
 });
 
 // المسار لصفحة "معلومات عنا"
-$router->add('/about', function() use ($twig, $pdo, $language) {
+$router->get('/about', function() use ($twig, $pdo, $language) {
     $translations = loadTranslations($language); // استخدم اللغة الحالية هنا
     echo $twig->render('about.twig', ['translations' => $translations]);
 });
 
 // المسار لمعالجة نموذج الاتصال
-$router->add('/contact-process', function() use ($twig, $pdo) {
+$router->post('/contact-process', function() use ($twig, $pdo) {
     $contactController = new ContactController($pdo, $twig);
     $contactController->handleContactForm();
 });
 
 // المسار لصفحة "أماكن أكثر"
-$router->add('/more-places', function() use ($twig, $pdo) {
+$router->get('/more-places', function() use ($twig, $pdo) {
     $controller = new MorePlacesController($twig, $pdo);
     $controller->showMorePlaces();
 });
 
 // المسار لعرض DJs بناءً على المدينة
-$router->add('/djs/city/{city}', function($city) use ($twig, $pdo) {
+$router->get('/djs/city/{city}', function($city) use ($twig, $pdo) {
     try {
         $statement = $pdo->prepare('SELECT * FROM djs WHERE city = :city');
         $statement->execute(['city' => $city]);
@@ -166,7 +167,7 @@ $router->add('/djs/city/{city}', function($city) use ($twig, $pdo) {
 });
 
 // المسار لعرض DJs بناءً على الدولة
-$router->add('/djs/country/{country}', function($country) use ($twig, $pdo) {
+$router->get('/djs/country/{country}', function($country) use ($twig, $pdo) {
     try {
         // الحصول على المدن بناءً على الدولة
         $stmt = $pdo->prepare('SELECT city FROM cities WHERE country_code = :country');
@@ -191,4 +192,4 @@ $router->add('/djs/country/{country}', function($country) use ($twig, $pdo) {
 });
 
 // تنفيذ التوجيه استنادًا إلى URI
-$router->dispatch(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+$router->run();

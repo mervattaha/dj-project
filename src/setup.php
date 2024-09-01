@@ -1,27 +1,16 @@
 <?php
-
 require_once __DIR__ . '/../vendor/autoload.php';
+
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
-use Twig\Extra\Intl\IntlExtension; // تأكد من أنك تستخدم الفئة الصحيحة
+use Twig\Extra\Intl\IntlExtension;
 
-// تحميل الترجمة بناءً على اللغة المحددة
-$language = $_GET['lang'] ?? 'en'; // افتراض اللغة الإنجليزية إذا لم يتم تحديدها
-$translations = loadTranslations($language);
-
-// إعداد Twig
+// Set up Twig
 $loader = new FilesystemLoader(__DIR__ . '/../src/views');
 $twig = new Environment($loader, [
-    'cache' => false, // تعطيل التخزين المؤقت
-    'debug' => true,  // تفعيل وضع التصحيح
+    'cache' => false, // Set to true for production
+    'debug' => true,
 ]);
 
-// إضافة امتداد الترجمة
+// Add the IntlExtension
 $twig->addExtension(new IntlExtension());
-
-// إضافة فلتر الترجمة
-$twig->addFilter(new \Twig\TwigFilter('trans', function ($string) use ($translations) {
-    return $translations[$string] ?? $string;
-}));
-
-return $twig;

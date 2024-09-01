@@ -16,4 +16,4 @@ if (isset($_POST['latitude']) && isset($_POST['longitude'])) {
 } else {
     echo 'Location data not received';
 }
-?>
+

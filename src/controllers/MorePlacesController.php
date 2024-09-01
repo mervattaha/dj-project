@@ -11,12 +11,6 @@ class MorePlacesController extends BaseController
     public function showMorePlaces()
     {
         try {
-            // الحصول على موقع المستخدم
-            $userLocation = $this->getUserLocation();
-
-            // جلب المدن القريبة
-            $cities = $this->getNearbyCities($userLocation);
-
             // جلب المواقع المميزة
             $topLocations = $this->getTopLocations();
 
@@ -24,9 +18,8 @@ class MorePlacesController extends BaseController
             $countries = $this->getCountries();
 
             // عرض القالب مع المدن القريبة، المواقع المميزة، والدول
-            $this->renderWithFooter('more-places.twig', [
+            echo $this->twig->render('more-places.twig', [
                 'topLocations' => $topLocations,
-                'cities' => $cities,
                 'countries' => $countries
             ]);
         } catch (Exception $e) {
@@ -40,36 +33,6 @@ class MorePlacesController extends BaseController
         return ['latitude' => 30.0444, 'longitude' => 31.2357]; // القاهرة، على سبيل المثال
     }
 
-    public function getNearbyCities($userLocation)
-    {
-        $latitude = $userLocation['latitude'];
-        $longitude = $userLocation['longitude'];
-    
-        try {
-            $stmt = $this->pdo->prepare("
-                SELECT city_name, country_code, latitude, longitude,
-                (6371 * ACOS(
-                    COS(RADIANS(:lat)) * COS(RADIANS(latitude)) * COS(RADIANS(longitude) - RADIANS(:long)) +
-                    SIN(RADIANS(:lat)) * SIN(RADIANS(latitude))
-                )) AS distance
-                FROM cities
-                HAVING distance < 50
-                ORDER BY distance
-                LIMIT 10
-            ");
-            $stmt->execute([
-                ':lat' => $latitude,
-                ':long' => $longitude
-            ]);
-    
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
-        } catch (PDOException $e) {
-            // سجل الخطأ بدلاً من عرضه
-            error_log("Database error: " . $e->getMessage());
-            return [];
-        }
-    }
     
 
     private function getTopLocations()
