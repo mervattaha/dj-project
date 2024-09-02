@@ -13,7 +13,7 @@ use App\Controllers\CategoryController;
 use App\Controllers\ContactController;
 use App\Controllers\MorePlacesController;
 use App\Controllers\DJController;
-use App\Controllers\TraditionalWeddingsController;
+use App\Repositories\DJRepository;
 
 
 // التأكد من تحميل ملفات الموديلات والمراقبين مرة واحدة فقط
@@ -48,6 +48,7 @@ $twig->addGlobal('cities', $cities);
 
 // إعداد الروتر باستخدام Bramus Router
 $router = new Router();
+
 
 // المسار للصفحة الرئيسية
 $router->get('/', function() use ($twig, $pdo) {
@@ -171,18 +172,48 @@ $router->get('/djs/city/{city}', function($city) use ($twig, $pdo) {
 });
 
 
-$router->get('/traditional-weddings/{subcategorySlug}', function($subcategorySlug) use ($twig, $pdo) {
-    $controller = new TraditionalWeddingsController($twig, $pdo);
-    $controller->showSubcategory($subcategorySlug);
+// Initialize components
+$djRepository = new DJRepository($pdo); // Make sure $pdo is a valid PDO instance
+$controller = new DJController($djRepository, $twig, $pdo); // Pass the initialized $djRepository, $twig, and $pdo
+// Define a route that uses the DJController
+
+// Example of a route to handle DJ searches
+$router->get('/search-djs', function() use ($twig, $pdo) {
+    // قم بإنشاء كائن DJRepository
+    $djRepository = new DJRepository($pdo);
+
+    // أنشئ كائن DJController
+    $djController = new DJController($djRepository, $twig, $pdo);
+
+    // تأكد من أن طلب GET يحتوي على معلمات
+    $query = $_GET['query'] ?? '';
+
+    // استخدم دالة البحث في DJs
+    $djs = $djController->searchDJs($query);
+
+    // عرض النتائج باستخدام دالة renderWithFooter
+    echo $djController->renderWithFooter('djs.twig', ['djs' => $djs, 'search_query' => $query]);
 });
 
 
 
-$router->get('/traditional-weddings', function() use ($twig, $pdo) {
-    $controller = new TraditionalWeddingsController($twig, $pdo);
-    $language = $_GET['lang'] ?? 'en'; // Default to 'en' if not specified
-    $controller->showTraditionalWeddings($language);
-});
+// طباعة قيم المتغيرات للتأكد من صحتها
+/*echo '<pre>';
+echo 'Twig: ';
+print_r($twig);
+echo 'PDO: ';
+print_r($pdo);
+echo 'Test Query: ';
+print_r($testQuery);
+echo '</pre>';
+
+$djs = $controller->searchDJs($testQuery);
+echo '<pre>';
+print_r($djs);
+echo '</pre>';
+exit;
+*/
+// المسار للبحث عن DJs
 
 
 

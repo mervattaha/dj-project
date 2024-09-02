@@ -1,9 +1,6 @@
-{% if djs is not empty %}
-    <ul>
-        {% for dj in djs %}
-            <li>{{ dj.name }} - {{ dj.genre }} - {{ dj.price }} - {{ dj.country_name }}</li>
-        {% endfor %}
-    </ul>
-{% else %}
-    <p>No DJs available for this subcategory at the moment.</p>
-{% endif %}
+{% extends 'base.twig' %}
+
+{% block content %}
+<h1>{{ subcategory.name }}</h1>
+<p>Details about the subcategory...</p>
+{% endblock %}

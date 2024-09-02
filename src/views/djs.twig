@@ -3,12 +3,30 @@
 {% block content %}
     <div class="container mt-5">
         <h1>DJs in {% if city %}{{ city }}{% else %}{{ country }}{% endif %}</h1>
+
+        <!-- نموذج البحث -->
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <form action="/search-djs" method="GET" class="search-form">
+                    <input type="text" name="query" placeholder="Search DJs, genres, etc." class="search-input" value="{{ search_query }}">
+                    <button type="submit" class="search-button">Find DJs</button>
+                </form>
+            </div>
+        </div>
+<h1>Search Results</h1>
+
+
+
         {% if djs is not empty %}
             <div class="row">
                 {% for dj in djs %}
                     <div class="col-md-4">
                         <div class="card mb-4">
-                            <img src="{{ dj.image }}" class="card-img-top" alt="{{ dj.name }}">
+                            {% if dj.image %}
+                                <img src="{{ dj.image }}" class="card-img-top" alt="{{ dj.name }}" style="object-fit: cover; height: 200px;">
+                            {% else %}
+                                <img src="/images/default-image.jpg" class="card-img-top" alt="Default Image" style="object-fit: cover; height: 200px;">
+                            {% endif %}
                             <div class="card-body">
                                 <h5 class="card-title">{{ dj.name }}</h5>
                                 <p class="card-text"><strong>Genre:</strong> {{ dj.genre }}</p>
@@ -21,9 +39,7 @@
                 {% endfor %}
             </div>
         {% else %}
-            <p>No DJs found in this location.</p>
+            <p>No DJs found matching your search query.</p>
         {% endif %}
     </div>
-
-   
 {% endblock %}

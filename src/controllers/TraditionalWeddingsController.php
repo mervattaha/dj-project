@@ -17,60 +17,85 @@ class TraditionalWeddingsController
     public function showTraditionalWeddings($language = 'en')
     {
         $translations = $this->loadTranslations($language);
+    
+        // Fetch subcategories for the "Weddings" category
+        $categoryId = $this->getCategoryId('Weddings');
         
-        $sql = "
+        $sqlSubcategories = "
+            SELECT id, name, slug
+            FROM event_subcategories
+            WHERE category_id = :category_id
+        ";
+    
+        $stmtSubcategories = $this->pdo->prepare($sqlSubcategories);
+        $stmtSubcategories->execute(['category_id' => $categoryId]);
+        $subcategories = $stmtSubcategories->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Fetch DJs for a specific subcategory
+        $sqlDJs = "
             SELECT d.*, c.country_name
             FROM djs d
             LEFT JOIN countries c ON d.country_id = c.id
             WHERE d.genre = :genre
         ";
-        
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute(['genre' => 'Traditional Weddings']);
-        $djs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        if ($djs === false) {
-            echo "Error retrieving DJs.";
-            return;
-        }
-        
-        echo $this->twig->render('test.twig', [
+    
+        $stmtDJs = $this->pdo->prepare($sqlDJs);
+        $stmtDJs->execute(['genre' => 'Traditional Weddings']);
+        $djs = $stmtDJs->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Check if no DJs are found
+        $noDJsMessage = empty($djs) ? $translations['no_djs_available'] : '';
+    
+        // Render the Twig template
+        echo $this->twig->render('subcategory.twig', [
             'translations' => $translations,
             'djs' => $djs,
+            'subcategories' => $subcategories,
+            'noDJsMessage' => $noDJsMessage
         ]);
+    }
+    
+    private function getCategoryId($categoryName)
+    {
+        $sql = "SELECT id FROM event_categories WHERE name = :name";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['name' => $categoryName]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        return $result ? $result['id'] : null;
     }
     
     public function showSubcategory($subcategory, $language = 'en')
     {
         $translations = $this->loadTranslations($language);
-        
+    
         $sql = "
             SELECT d.*, c.country_name
             FROM djs d
             LEFT JOIN countries c ON d.country_id = c.id
-            WHERE d.genre = :subcategory
+            WHERE d.subcategory = :subcategory
         ";
-        
+    
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['subcategory' => $subcategory]);
         $djs = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        // Debugging: Check the content of $djs
-        echo '<pre>';
-        print_r($djs);
-        echo '</pre>';
-        
-        if ($djs === false) {
-            echo "Error retrieving DJs for the subcategory.";
-            return;
-        }
-        
+    
+        // Print query result for debugging
+        error_log("Fetched DJs: " . print_r($djs, true));
+    
+        // Check if no DJs are found
+        $noDJsMessage = empty($djs) ? $translations['no_djs_available'] : '';
+    
+        // Render the Twig template
         echo $this->twig->render('subcategory.twig', [
             'translations' => $translations,
             'djs' => $djs,
-            'subcategory' => $subcategory
+            'subcategory' => $subcategory,
+            'noDJsMessage' => $noDJsMessage
         ]);
     }
+    
+    
     
 private function loadTranslations($language = 'en')
 {

@@ -2,10 +2,15 @@
 
 {% block content %}
 <h1>{{ dj.name }}</h1>
-<img src="{{ dj.image }}" class="img-fluid" alt="{{ dj.name }}">
-<p>Genre: {{ dj.genre }}</p>
-<p>Price: ${{ dj.price }} per hour</p>
-<p>{{ dj.description }}</p>
-   <p>City: {{ dj.city }}</p>
-<a href="/book?id={{ dj.id }}" class="btn btn-success">Book Now</a>
+
+<div class="card">
+    <img src="{{ dj.image }}" class="card-img-top" alt="{{ dj.name }}">
+    <div class="card-body">
+        <h5 class="card-title">{{ dj.name }}</h5>
+        <p class="card-text">Genre: {{ dj.genre }}</p>
+        <p class="card-text">Price: ${{ dj.price }}</p>
+        <p class="card-text">{{ dj.description }}</p>
+        <a href="/book?dj_id={{ dj.id }}" class="btn btn-primary">Book Now</a>
+    </div>
+</div>
 {% endblock %}

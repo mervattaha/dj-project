@@ -9,6 +9,8 @@
     "autoload": {
         "psr-4": {
             "App\\Controllers\\": "src/controllers/",
+            "App\\Repositories\\": "src/Repositories/",
+
             "App\\Models\\": "src/models/",
             "App\\": "src/"
         }

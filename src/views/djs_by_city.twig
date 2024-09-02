@@ -1,25 +1,26 @@
 {% extends 'base.twig' %}
 
 {% block content %}
-<div class="container">
-    <h1 class="text-center mb-4">DJs in {{ cityCode }}</h1>
-    <div class="d-flex flex-wrap justify-content-center">
-        {% if djs is not empty %}
-            {% for dj in djs %}
-                <div class="card border-light shadow-lg mx-2 mb-4" style="flex: 1 1 280px; max-width: 280px;">
+<h1> DJs in {{ city_name }} </h1>
+
+{% if djs is empty %}
+    <p>No DJs available in {{ city_name }} at the moment.</p>
+{% else %}
+    <div class="row">
+        {% for dj in djs %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ dj.image }}" class="card-img-top" alt="{{ dj.name }}">
                     <div class="card-body">
-                        <h5 class="card-title mb-2">{{ dj.name }}</h5>
-                        <p class="card-text mb-3">
-                            <strong>Specialization:</strong> {{ dj.specialization }}
-                        </p>
-                        <!-- يمكنك إضافة رابط أو زر لتفاصيل DJ هنا -->
-                        <a href="/dj?id={{ dj.id }}" class="btn btn-outline-primary">View Profile</a>
+                        <h5 class="card-title">{{ dj.name }}</h5>
+                        <p class="card-text">Genre: {{ dj.genre }}</p>
+                        <p class="card-text">Price: ${{ dj.price }}</p>
+                        <p class="card-text">{{ dj.description }}</p>
+                        <a href="/book?dj_id={{ dj.id }}" class="btn btn-primary">Book Now</a>
                     </div>
                 </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-center">No DJs available in this city.</p>
-        {% endif %}
+            </div>
+        {% endfor %}
     </div>
-</div>
+{% endif %}
 {% endblock %}
