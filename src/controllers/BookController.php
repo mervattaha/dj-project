@@ -1,45 +1,68 @@
 <?php
+namespace App\Controllers;
 
-require_once '../src/models/Booking.php'; // تأكد من صحة المسار
+use Twig\Environment;
+use PDO;use
+ App\Models\BookingModel; // Ensure you have this import if BookingModel is in a different namespace
 
-class BookController {
-    private $twig;
+class BookController
+{
+    protected $twig;
+    protected $pdo;
     private $bookingModel;
 
-    public function __construct($twig, $pdo) {
+    public function __construct(Environment $twig, PDO $pdo, BookingModel $bookingModel)
+    { 
         $this->twig = $twig;
         $this->pdo = $pdo;
-        $this->bookingModel = new Booking($pdo);
+        $this->bookingModel = $bookingModel;
     }
 
-    public function showBookingForm() {
+    public function showBookingForm()
+    {
+        // عرض نموذج الحجز
         echo $this->twig->render('book.twig');
     }
-
-    public function processBooking() {
-        // الحصول على بيانات النموذج
-        $djId = $_POST['dj_id'] ?? '';
-        $userName = $_POST['user_name'] ?? '';
-        $eventDate = $_POST['event_date'] ?? '';
-        $eventType = $_POST['event_type'] ?? '';
-        $duration = $_POST['duration'] ?? '';
-        $price = $_POST['price'] ?? '';
-
-        // التحقق من أن جميع الحقول موجودة
-        if (empty($djId) || empty($userName) || empty($eventDate) || empty($eventType) || empty($duration) || empty($price)) {
-            // عرض رسالة خطأ إذا كانت الحقول غير مكتملة
-            echo $this->twig->render('booking_confirm.twig', ['message' => 'Booking failed! Please fill in all required fields.']);
+    public function processBooking()
+    {
+        $djId = filter_input(INPUT_POST, 'dj_id', FILTER_SANITIZE_NUMBER_INT);
+        $userName = htmlspecialchars($_POST['name'] ?? '', ENT_QUOTES, 'UTF-8');
+        $userEmail = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+        $eventDate = htmlspecialchars($_POST['date'] ?? '', ENT_QUOTES, 'UTF-8');
+        $eventType = htmlspecialchars($_POST['event_type'] ?? '', ENT_QUOTES, 'UTF-8'); // Add this
+        $duration = filter_input(INPUT_POST, 'duration', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION); // Add this
+        $price = filter_input(INPUT_POST, 'price', FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION); // Add this
+        
+        // Validate email address
+        if (!filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
+            echo $this->twig->render('booking_confirm.twig', [
+                'message' => 'Booking failed! Invalid email address.'
+            ]);
             return;
         }
-
-        // استدعاء وظيفة إدخال الحجز
+    
+        // Validate required fields
+        if (empty($djId) || empty($userName) || empty($eventDate) || empty($eventType) || empty($duration) || empty($price)) {
+            echo $this->twig->render('booking_confirm.twig', [
+                'message' => 'Booking failed! Please fill in all required fields.'
+            ]);
+            return;
+        }
+        
         try {
+            // Create booking using the model
             $this->bookingModel->createBooking($djId, $userName, $eventDate, $eventType, $duration, $price);
-            // عرض رسالة تأكيد
-            echo $this->twig->render('booking_confirm.twig', ['message' => 'Booking confirmed!']);
-        } catch (Exception $e) {
-            // عرض رسالة خطأ إذا فشلت عملية الحجز
-            echo $this->twig->render('booking_confirm.twig', ['message' => 'Booking failed! ' . $e->getMessage()]);
+            echo $this->twig->render('booking_confirm.twig', [
+                'message' => 'Booking confirmed!'
+            ]);
+        } catch (\Exception $e) {
+            // Handle exceptions and display error message
+            echo $this->twig->render('booking_confirm.twig', [
+                'message' => 'Booking failed! ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8')
+            ]);
         }
     }
+    
+    
+    
 }

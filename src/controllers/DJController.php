@@ -1,113 +1,71 @@
 <?php
-require_once '../src/models/DJ.php';
 
-class DJController {
-    private $twig;
-    private $pdo;
-    private $djModel;
+namespace App\Controllers;
 
-    public function __construct($twig, $pdo) {
+use App\Repositories\DJRepository;
+use Twig\Environment;
+use PDO;
+
+class DJController extends BaseController
+{
+    protected $twig;
+    protected $djRepository;
+    protected  $pdo;
+
+    public function __construct(Environment $twig, DJRepository $djRepository, PDO $pdo)
+    {
         $this->twig = $twig;
+        $this->djRepository = $djRepository;
         $this->pdo = $pdo;
-        $this->djModel = new DJ($pdo);
     }
 
-    public function getAllDJs() {
-        $stmt = $this->pdo->query("SELECT id, name, description, image, city FROM djs");
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getDJsByCity($city) {
-        $stmt = $this->pdo->prepare("SELECT id, name, description, image, city FROM djs WHERE city = ?");
-        $stmt->execute([$city]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getDJsByCountry($country) {
-        // الحصول على المدن بناءً على الدولة
-        $stmt = $this->pdo->prepare("SELECT city FROM cities WHERE country_code = ?");
-        $stmt->execute([$country]);
-        $cities = $stmt->fetchAll(PDO::FETCH_COLUMN);
-
-        if (!empty($cities)) {
-            // الحصول على DJs بناءً على المدن
-            $placeholders = implode(',', array_fill(0, count($cities), '?'));
-            $stmt = $this->pdo->prepare("SELECT id, name, description, image, city FROM djs WHERE city IN ($placeholders)");
-            $stmt->execute($cities);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    public function searchDJs($query): array
+    {
+        try {
+            return $this->djRepository->search($query);
+        } catch (\Exception $e) {
+            $this->handleError($e);
+            return [];
         }
-
-        return [];
     }
+    
 
-    public function showAllDJs() {
-        $djs = $this->djModel->getAllDJs();
-        echo $this->twig->render('home.twig', ['djs' => $djs]);
-    }
+    public function showDJProfile(int $id): void
+    {
+        try {
+            $dj = $this->djRepository->getDJById($id);
 
-    public function showDJsByCity($city) {
-        $djs = $this->getDJsByCity($city);
-        echo $this->twig->render('djs.twig', ['djs' => $djs, 'city' => $city]);
-    }
-
-    public function showDJsByCountry($country) {
-        $djs = $this->getDJsByCountry($country);
-        echo $this->twig->render('djs.twig', ['djs' => $djs, 'city' => 'Various Cities in ' . $country]);
-    }
-
-    public function showDJ($id) {
-        $dj = $this->djModel->getDJById($id);
-        echo $this->twig->render('dj_profile.twig', ['dj' => $dj]);
-    }
-
-    public function showDJProfile($id) {
-        $stmt = $this->pdo->prepare('SELECT * FROM djs WHERE id = :id');
-        $stmt->execute(['id' => $id]);
-        $dj = $stmt->fetch();
-
-        if ($dj) {
-            echo $this->twig->render('dj_profile.twig', ['dj' => $dj]);
-        } else {
-            echo $this->twig->render('404.twig', ['message' => 'DJ not found']);
+            if ($dj) {
+                $countryName = $this->getCountryNameForDJ($dj['city']);
+                echo $this->twig->render('dj_profile.twig', [
+                    'dj' => $dj,
+                    'country_name' => $countryName
+                ]);
+            } else {
+                echo $this->twig->render('404.twig', ['message' => 'DJ not found']);
+            }
+        } catch (\Exception $e) {
+            $this->handleError($e);
         }
     }
 
-    public function showEventCategories() {
-        $categories = [
-            // الفئات كما هي
-        ];
-
-        echo $this->twig->render('event_categories.twig', ['categories' => $categories]);
+    private function getCountryNameForDJ($city)
+    {
+        // Implement logic to get country name based on city
+        $stmt = $this->pdo->prepare('
+            SELECT co.country_name
+            FROM cities ci
+            JOIN countries co ON ci.country_code = co.country_code
+            WHERE ci.city_name = :city
+        ');
+        $stmt->execute(['city' => $city]);
+        return $stmt->fetchColumn();
     }
 
-    public function showEventCategory($categorySlug) {
-        // قائمة الفئات والأحداث الفرعية
-        $categories = [
-            // الفئات كما هي
-        ];
-
-        $category = strtolower($categorySlug);
-
-        if (array_key_exists($category, $categories)) {
-            echo $this->twig->render('event_subcategories.twig', ['categoryName' => ucfirst($category), 'categorySlug' => $category, 'subcategories' => $categories[$category]]);
-        } else {
-            echo $this->twig->render('404.twig', ['message' => 'Category not found']);
-        }
-    }
-
-    public function showSubcategory($categorySlug, $subcategorySlug) {
-        // قائمة الفئات والأحداث الفرعية
-        $categories = [
-            // الفئات كما هي
-        ];
-
-        $category = strtolower($categorySlug);
-        $subcategory = str_replace('_', ' ', strtolower($subcategorySlug));
-
-        if (array_key_exists($category, $categories) && in_array(ucfirst($subcategory), $categories[$category])) {
-            echo $this->twig->render('subcategory.twig', ['subcategory' => ucfirst($subcategory)]);
-        } else {
-            echo $this->twig->render('404.twig', ['message' => 'Subcategory not found']);
-        }
+    private function handleError(\Exception $e)
+    {
+        // Log the error and render an error page
+        error_log($e->getMessage(), 3, __DIR__ . '/../logs/error.log');
+        echo $this->twig->render('error.twig', ['message' => 'An error occurred. Please try again later.']);
     }
 }

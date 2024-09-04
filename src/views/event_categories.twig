@@ -1,19 +1,181 @@
 {% extends 'base.twig' %}
 
 {% block content %}
-<h1>Event Categories</h1>
-<div class="row">
-    {% for category in categories %}
-        <div class="col-md-4 mb-4">
-            <div class="card">
-                <!-- عرض الصورة -->
-                <img src="/assets/images/categories/{{ category.image_path }}" class="card-img-top" alt="{{ category.name }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ category.name }}</h5>
-                    <a href="/event_categories/{{ category.slug }}" class="btn btn-primary">View Events</a>
+ <!-- Event Categories Section -->
+    <section class="event-categories py-5">
+        <div class="container">
+            <h2 class="text-center">{{ translations['event_categories'] }}</h2>
+            <p class="text-center">{{ translations['explore_categories'] }}</p>
+            <div class="row">
+                <!-- Iterate over categories with images -->
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/weddings.jpg" class="card-img-top" alt="{{ translations['weddings'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['weddings'] }}</h5>
+                            <p class="card-text">{{ translations['weddings_description'] }}</p>
+                            <a href="/event_categories/weddings" class="btn btn-primary">{{ translations['explore_weddings'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/corporate_events.jpg" class="card-img-top" alt="{{ translations['corporate_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['corporate_events'] }}</h5>
+                            <p class="card-text">{{ translations['corporate_events_description'] }}</p>
+                            <a href="/event_categories/corporate_events" class="btn btn-primary">{{ translations['explore_corporate_events'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/nightlife_club_events.jpg" class="card-img-top" alt="{{ translations['nightlife_club_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['nightlife_club_events'] }}</h5>
+                            <p class="card-text">{{ translations['nightlife_club_events_description'] }}</p>
+                            <a href="/event_categories/nightlife_club_events" class="btn btn-primary">{{ translations['explore_nightlife_club_events'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/private_parties.jpg" class="card-img-top" alt="{{ translations['private_parties'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['private_parties'] }}</h5>
+                            <p class="card-text">{{ translations['private_parties_description'] }}</p>
+                            <a href="/event_categories/private_parties" class="btn btn-primary">{{ translations['explore_private_parties'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/festivals_large_scale_events.jpg" class="card-img-top" alt="{{ translations['festivals_large_scale_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['festivals_large_scale_events'] }}</h5>
+                            <p class="card-text">{{ translations['festivals_large_scale_events_description'] }}</p>
+                            <a href="/event_categories/festivals_large_scale_events" class="btn btn-primary">{{ translations['explore_festivals_large_scale_events'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/graduation_parties.jpg" class="card-img-top" alt="{{ translations['graduation_parties'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['graduation_parties'] }}</h5>
+                            <p class="card-text">{{ translations['graduation_parties_description'] }}</p>
+                            <a href="/event_categories/graduation_parties" class="btn btn-primary">{{ translations['explore_graduation_parties'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/school_university_events.jpg" class="card-img-top" alt="{{ translations['school_university_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['school_university_events'] }}</h5>
+                            <p class="card-text">{{ translations['school_university_events_description'] }}</p>
+                            <a href="/event_categories/school_university_events" class="btn btn-primary">{{ translations['explore_school_university_events'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/childrens_parties.jpg" class="card-img-top" alt="{{ translations['childrens_parties'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['childrens_parties'] }}</h5>
+                            <p class="card-text">{{ translations['childrens_parties_description'] }}</p>
+                            <a href="/event_categories/childrens_parties" class="btn btn-primary">{{ translations['explore_childrens_parties'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/charity_events.jpg" class="card-img-top" alt="{{ translations['charity_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['charity_events'] }}</h5>
+                            <p class="card-text">{{ translations['charity_events_description'] }}</p>
+                            <a href="/event_categories/charity_events" class="btn btn-primary">{{ translations['explore_charity_events'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/cultural_religious_events.jpg" class="card-img-top" alt="{{ translations['cultural_religious_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['cultural_religious_events'] }}</h5>
+                            <p class="card-text">{{ translations['cultural_religious_events_description'] }}</p>
+                            <a href="/event_categories/cultural_religious_events" class="btn btn-primary">{{ translations['explore_cultural_religious_events'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/funerals_memorial_services.jpg" class="card-img-top" alt="{{ translations['funerals_memorial_services'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['funerals_memorial_services'] }}</h5>
+                            <p class="card-text">{{ translations['funerals_memorial_services_description'] }}</p>
+                            <a href="/event_categories/funerals_memorial_services" class="btn btn-primary">{{ translations['explore_funerals_memorial_services'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/sports_events.jpg" class="card-img-top" alt="{{ translations['sports_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['sports_events'] }}</h5>
+                            <p class="card-text">{{ translations['sports_events_description'] }}</p>
+                            <a href="/event_categories/sports_events" class="btn btn-primary">{{ translations['explore_sports_events'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/virtual_events.jpg" class="card-img-top" alt="{{ translations['virtual_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['virtual_events'] }}</h5>
+                            <p class="card-text">{{ translations['virtual_events_description'] }}</p>
+                            <a href="/event_categories/virtual_events" class="btn btn-primary">{{ translations['explore_virtual_events'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/fashion_events.jpg" class="card-img-top" alt="{{ translations['fashion_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['fashion_events'] }}</h5>
+                            <p class="card-text">{{ translations['fashion_events_description'] }}</p>
+                            <a href="/event_categories/fashion_events" class="btn btn-primary">{{ translations['explore_fashion_events'] }}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <img src="/assets/images/categories/seasonal_holiday_events.jpg" class="card-img-top" alt="{{ translations['seasonal_holiday_events'] }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ translations['seasonal_holiday_events'] }}</h5>
+                            <p class="card-text">{{ translations['seasonal_holiday_events_description'] }}</p>
+                            <a href="/event_categories/seasonal_holiday_events" class="btn btn-primary">{{ translations['explore_seasonal_holiday_events'] }}</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    {% endfor %}
-</div>
+    </section>
 {% endblock %}
+
+
+

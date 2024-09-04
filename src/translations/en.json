@@ -71,7 +71,29 @@
       "email": "Email",
       "subject": "Subject",
       "message": "Message",
-      "send": "Send"
+      "send": "Send",
+
+
+
+      
+    
+        "subcategory": "Traditional Weddings",
+        "details_about_subcategory": "Explore the best DJs available for traditional weddings in various locations.",
+        "genre": "Genre",
+        "price": "Price",
+        "city": "City",
+        "country": "Country",
+        "view_details": "View Details",
+        "no_djs_available": "No DJs available for this category at the moment.",
+        "search_placeholder": "Search DJs",
+        "select_city": "Select City",
+        "max_price": "Max Price",
+        "filter": "Filter"
+
+    
+
+    
+    
   }
   
 

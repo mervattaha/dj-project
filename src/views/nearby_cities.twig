@@ -1,0 +1,8 @@
+<h1>Nearby Cities</h1>
+<ul>
+    {% for city in cities %}
+        <li>{{ city.city }} ({{ city.latitude }}, {{ city.longitude }})</li>
+    {% else %}
+        <li>No nearby cities found.</li>
+    {% endfor %}
+</ul>
