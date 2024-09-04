@@ -5,7 +5,6 @@ use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 use Twig\Extra\Intl\IntlExtension;
 use App\Repositories\DJRepository;
-use App\Controllers\DJController;
 
 // Set up Twig
 $loader = new FilesystemLoader(__DIR__ . '/../src/views');

@@ -13,23 +13,36 @@ class DJRepository
         $this->pdo = $pdo;
     }
 
-    public function getPdo()
+    public function searchDJsByLocation($location)
     {
-        return $this->pdo;
+        $stmt = $this->pdo->prepare('SELECT id FROM cities WHERE name LIKE ?');
+        $stmt->execute(["%{$location}%"]);
+        $city = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($city) {
+            $cityId = $city['id'];
+            $stmt = $this->pdo->prepare('SELECT * FROM djs WHERE city_id = ?');
+            $stmt->execute([$cityId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            $stmt = $this->pdo->prepare('SELECT * FROM djs WHERE city LIKE ?');
+            $stmt->execute(["%{$location}%"]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
-    public function searchDJs($query) {
-        // Example query; adjust based on your actual SQL and requirements
-        $stmt = $this->pdo->prepare('SELECT * FROM djs WHERE name LIKE ?');
-        $stmt->execute(["%$query%"]);
+
+    public function search($query)
+    {
+        $sql = "SELECT * FROM djs WHERE name LIKE :query";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['query' => "%$query%"]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // إضافة دوال للوصول إلى البيانات من قاعدة البيانات
-    public function findById($id) {
+    public function getDJById($id)
+    {
         $stmt = $this->pdo->prepare('SELECT * FROM djs WHERE id = :id');
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
+        $stmt->execute(['id' => $id]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 }
-

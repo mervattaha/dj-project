@@ -6,37 +6,42 @@ use Twig\Environment;
 use PDO;
 use Exception;
 
-class CategoryController {
-    private Environment $twig;
-    private PDO $pdo;
 
-    public function __construct(Environment $twig, PDO $pdo) {
+class CategoryController extends BaseController{
+    protected  $twig;
+    protected  $pdo;
+
+    public function __construct($twig, $pdo) {
         $this->twig = $twig;
         $this->pdo = $pdo;
     }
 
-    public function showCategories(): void {
+    public function showCategories() {
         try {
             $stmt = $this->pdo->query('SELECT * FROM event_categories');
             $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo $this->twig->render('event_categories.twig', ['categories' => $categories]);
+        } catch (\PDOException $e) {
+            echo $this->twig->render('error.twig', ['message' => 'Database error: ' . htmlspecialchars($e->getMessage())]);
         } catch (Exception $e) {
-            $this->handleError($e);
+            echo $this->twig->render('error.twig', ['message' => 'An unexpected error occurred.']);
         }
     }
-    public function showSubcategories(string $categorySlug): void {
+
+    public function showSubcategories($categorySlug) {
         try {
-            // Get the category based on slug
+            // Verify and sanitize categorySlug
+            $categorySlug = htmlspecialchars($categorySlug);
+            
             $stmt = $this->pdo->prepare('SELECT * FROM event_categories WHERE slug = :slug');
             $stmt->execute(['slug' => $categorySlug]);
             $category = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
             if ($category) {
-                // Get the subcategories for the retrieved category
                 $stmt = $this->pdo->prepare('SELECT * FROM event_subcategories WHERE category_id = :category_id');
                 $stmt->execute(['category_id' => $category['id']]);
                 $subcategories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    
+
                 echo $this->twig->render('event_subcategories.twig', [
                     'category' => $category,
                     'subcategories' => $subcategories
@@ -44,14 +49,19 @@ class CategoryController {
             } else {
                 echo $this->twig->render('404.twig', ['message' => 'Category not found']);
             }
+        } catch (\PDOException $e) {
+            echo $this->twig->render('error.twig', ['message' => 'Database error: ' . htmlspecialchars($e->getMessage())]);
         } catch (Exception $e) {
-            $this->handleError($e);
+            echo $this->twig->render('error.twig', ['message' => 'An unexpected error occurred.']);
         }
     }
-    
 
-    public function showSubcategory(string $categorySlug, string $subcategorySlug): void {
+    public function showSubcategory($categorySlug, $subcategorySlug) {
         try {
+            // Verify and sanitize inputs
+            $categorySlug = htmlspecialchars($categorySlug);
+            $subcategorySlug = htmlspecialchars($subcategorySlug);
+            
             $stmt = $this->pdo->prepare('SELECT * FROM event_categories WHERE slug = :slug');
             $stmt->execute(['slug' => $categorySlug]);
             $category = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -72,15 +82,10 @@ class CategoryController {
             } else {
                 echo $this->twig->render('404.twig', ['message' => 'Category not found']);
             }
+        } catch (\PDOException $e) {
+            echo $this->twig->render('error.twig', ['message' => 'Database error: ' . htmlspecialchars($e->getMessage())]);
         } catch (Exception $e) {
-            $this->handleError($e);
+            echo $this->twig->render('error.twig', ['message' => 'An unexpected error occurred.']);
         }
     }
-
-    private function handleError(Exception $e): void {
-        // Log error to a file
-        error_log($e->getMessage(), 3, '/path/to/error.log');
-        echo "An error occurred. Please try again later.";
-    }
-    
 }

@@ -6,15 +6,14 @@ use PDO;
 
 class BaseController
 {
-    protected $twig;
     protected $pdo;
+    protected $twig;
 
-    public function __construct(Environment $twig, PDO $pdo)
+    public function __construct(PDO $pdo, Environment $twig)
     {
-        $this->twig = $twig;
         $this->pdo = $pdo;
+        $this->twig = $twig;
     }
-
     /**
      * Renders a template with a footer included.
      *
