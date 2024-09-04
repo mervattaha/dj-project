@@ -1,16 +1,15 @@
 <?php
 
 namespace App\Controllers;
-
 use PDO;
-use Twig\Environment;
 
 class ContactController
 {
     private $pdo;
     private $twig;
+   
 
-    public function __construct($pdo, $twig)
+    public function __construct($twig, $pdo)
     {
         $this->pdo = $pdo;
         $this->twig = $twig;
@@ -18,12 +17,12 @@ class ContactController
 
     public function showContactForm()
     {
-        echo $this->twig->render('contact.twig', ['translations' => $this->loadTranslations()]);
+        return $this->twig->render('contact.twig', ['translations' => $this->loadTranslations()]);
     }
 
     public function handleContactForm()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+       if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $name = $_POST['name'] ?? '';
             $email = $_POST['email'] ?? '';
             $subject = $_POST['subject'] ?? '';
@@ -42,8 +41,7 @@ class ContactController
                 VALUES (?, ?, ?, ?)
             ');
 
-            $stmt->execute([$name, $email, $subject, $message]);
-
+            $stmt->execute([$name, $email, $subject, $message]);              
             header('Location: /contact-success');
             exit();
         }

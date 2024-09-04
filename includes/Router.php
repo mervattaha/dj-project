@@ -18,7 +18,7 @@ class Router {
         $this->routes[$route] = $handler;
     }
 
-    public function dispatch($url) {
+    public function dispatch($url) {     
         foreach ($this->routes as $route => $handler) {
             $pattern = preg_replace('/\{[a-zA-Z0-9_]+\}/', '([a-zA-Z0-9_-]+)', $route);
             $pattern = str_replace('/', '\/', $pattern);
@@ -35,6 +35,7 @@ class Router {
                     $method = $handler[1];
 
                     if (class_exists($controller) && method_exists($controller, $method)) {
+                        dd($controller);
                         $instance = new $controller($this->twig, $this->pdo);
                         call_user_func_array([$instance, $method], $matches);
                     } else {

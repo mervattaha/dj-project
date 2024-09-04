@@ -2,11 +2,9 @@
 
 {% block content %}
 <h1>{{ translations['contact_us'] }}</h1>
-
 {% if error %}
     <div class="alert alert-danger">{{ error }}</div>
 {% endif %}
-
 <form action="/contact-process" method="POST">
     <div class="form-group">
         <label for="name">{{ translations['name'] }}</label>

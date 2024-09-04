@@ -17,30 +17,52 @@ class CityModel
     public function getCountry($cityId)
     {
         $stmt = $this->pdo->prepare('
-            SELECT countries.name
+            SELECT countries.country_name
             FROM cities
-            JOIN countries ON cities.country_code = countries.code
+            JOIN countries ON cities.country_code = countries.country_code
             WHERE cities.id = :cityId
         ');
         $stmt->execute(['cityId' => $cityId]);
         $country = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        return $country ? $country['name'] : null;
+        return $country ? $country['country_name'] : null;
     }
 
     // دالة للحصول على المدن القريبة بناءً على الإحداثيات
-    public function getNearbyCities($latitude, $longitude)
-    {
-        // افترض أن الاستعلام يحتوي على عمود "name"
-        $sql = "SELECT * FROM cities WHERE latitude BETWEEN ? AND ? AND longitude BETWEEN ? AND ?";
-        $stmt = $this->pdo->prepare($sql);
+   /* public function getNearbyCities($userLocation) {
+        $latitude = $userLocation['latitude'];
+        $longitude = $userLocation['longitude'];
 
-        // قيم افتراضية لمثال. قد تحتاج لتعديل هذه القيم بناءً على احتياجاتك الفعلية
-        $latitudeRange = [$latitude - 0.1, $latitude + 0.1];
-        $longitudeRange = [$longitude - 0.1, $longitude + 0.1];
+        try {
+            $stmt = $this->pdo->prepare("
+                SELECT DISTINCT city_name, country_code, latitude, longitude,
+                ( (latitude - :lat) * (latitude - :lat) + (longitude - :long) * (longitude - :long) ) AS distance
+                FROM cities
+                ORDER BY distance
+                LIMIT 10
+            ");
+            $stmt->execute([
+                ':lat' => $latitude,
+                ':long' => $longitude
+            ]);
 
-        $stmt->execute(array_merge($latitudeRange, $longitudeRange));
+            $cities = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
+            // Remove duplicates in PHP (if needed)
+            $uniqueCities = [];
+            foreach ($cities as $city) {
+                $cityKey = $city['city_name'] . $city['country_code'];
+                if (!isset($uniqueCities[$cityKey])) {
+                    $uniqueCities[$cityKey] = $city;
+                }
+            }
+
+            return array_values($uniqueCities);
+        } catch (\PDOException $e) {
+            echo "Database error: " . $e->getMessage();
+            return [];
+        }
+    }*/
+
+
 }

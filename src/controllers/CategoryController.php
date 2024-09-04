@@ -6,25 +6,33 @@ use Twig\Environment;
 use PDO;
 use Exception;
 
+class CategoryController extends BaseController {
+    protected $twig;
+    protected $pdo;
+    protected $translations;
 
-class CategoryController extends BaseController{
-    protected  $twig;
-    protected  $pdo;
-
-    public function __construct($twig, $pdo) {
+    public function __construct($twig, $pdo, $translations) {
         $this->twig = $twig;
         $this->pdo = $pdo;
+        $this->translations = $translations;
     }
 
     public function showCategories() {
         try {
             $stmt = $this->pdo->query('SELECT * FROM event_categories');
             $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            echo $this->twig->render('event_categories.twig', ['categories' => $categories]);
+            echo $this->twig->render('event_categories.twig', [
+                'categories' => $categories,
+                'translations' => $this->translations
+            ]);
         } catch (\PDOException $e) {
-            echo $this->twig->render('error.twig', ['message' => 'Database error: ' . htmlspecialchars($e->getMessage())]);
+            echo $this->twig->render('error.twig', [
+                'message' => $this->translations['database_error'] . ': ' . htmlspecialchars($e->getMessage())
+            ]);
         } catch (Exception $e) {
-            echo $this->twig->render('error.twig', ['message' => 'An unexpected error occurred.']);
+            echo $this->twig->render('error.twig', [
+                'message' => $this->translations['unexpected_error']
+            ]);
         }
     }
 
@@ -44,15 +52,20 @@ class CategoryController extends BaseController{
 
                 echo $this->twig->render('event_subcategories.twig', [
                     'category' => $category,
-                    'subcategories' => $subcategories
+                    'subcategories' => $subcategories,
+                    'translations' => $this->translations
                 ]);
             } else {
-                echo $this->twig->render('404.twig', ['message' => 'Category not found']);
+                echo $this->twig->render('404.twig', ['message' => $this->translations['category_not_found']]);
             }
         } catch (\PDOException $e) {
-            echo $this->twig->render('error.twig', ['message' => 'Database error: ' . htmlspecialchars($e->getMessage())]);
+            echo $this->twig->render('error.twig', [
+                'message' => $this->translations['database_error'] . ': ' . htmlspecialchars($e->getMessage())
+            ]);
         } catch (Exception $e) {
-            echo $this->twig->render('error.twig', ['message' => 'An unexpected error occurred.']);
+            echo $this->twig->render('error.twig', [
+                'message' => $this->translations['unexpected_error']
+            ]);
         }
     }
 
@@ -75,17 +88,24 @@ class CategoryController extends BaseController{
                 $subcategory = $stmt->fetch(PDO::FETCH_ASSOC);
 
                 if ($subcategory) {
-                    echo $this->twig->render('subcategory.twig', ['subcategory' => $subcategory]);
+                    echo $this->twig->render('subcategory.twig', [
+                        'subcategory' => $subcategory,
+                        'translations' => $this->translations
+                    ]);
                 } else {
-                    echo $this->twig->render('404.twig', ['message' => 'Subcategory not found']);
+                    echo $this->twig->render('404.twig', ['message' => $this->translations['subcategory_not_found']]);
                 }
             } else {
-                echo $this->twig->render('404.twig', ['message' => 'Category not found']);
+                echo $this->twig->render('404.twig', ['message' => $this->translations['category_not_found']]);
             }
         } catch (\PDOException $e) {
-            echo $this->twig->render('error.twig', ['message' => 'Database error: ' . htmlspecialchars($e->getMessage())]);
+            echo $this->twig->render('error.twig', [
+                'message' => $this->translations['database_error'] . ': ' . htmlspecialchars($e->getMessage())
+            ]);
         } catch (Exception $e) {
-            echo $this->twig->render('error.twig', ['message' => 'An unexpected error occurred.']);
+            echo $this->twig->render('error.twig', [
+                'message' => $this->translations['unexpected_error']
+            ]);
         }
     }
 }

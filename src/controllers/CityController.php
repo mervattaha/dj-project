@@ -26,19 +26,6 @@ class CityController {
         return $country ? $country['country_name'] : null;
     }
 
-    public function getNearbyCities($latitude, $longitude) {
-        $sql = "SELECT * FROM cities WHERE latitude BETWEEN ? AND ? AND longitude BETWEEN ? AND ?";
-        $stmt = $this->pdo->prepare($sql);
-
-        // Define range for latitude and longitude
-        $latitudeRange = [$latitude - 0.1, $latitude + 0.1];
-        $longitudeRange = [$longitude - 0.1, $longitude + 0.1];
-
-        $stmt->execute(array_merge($latitudeRange, $longitudeRange));
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
     public function showDJsByCity($cityName = null, $countryName = null) {
         $sql = "SELECT d.*, c.latitude, c.longitude FROM djs d JOIN cities c ON d.city_name = c.city_name WHERE d.city_name = :cityName";
         

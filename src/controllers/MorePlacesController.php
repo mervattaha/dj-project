@@ -1,13 +1,17 @@
 <?php
 namespace App\Controllers;
+
 use PDO;
+
 class MorePlacesController {
     private $twig;
     private $pdo;
+    private $translations;
 
-    public function __construct($twig, $pdo) {
+    public function __construct($twig, PDO $pdo, $translations) {
         $this->twig = $twig;
         $this->pdo = $pdo;
+        $this->translations = $translations;
     }
 
     public function showMorePlaces() {
@@ -28,7 +32,8 @@ class MorePlacesController {
             echo $this->twig->render('more-places.twig', [
                 'topLocations' => $topLocations,
                 'cities' => $cities,
-                'countries' => $countries
+                'countries' => $countries,
+                'translations' => $this->translations // إضافة الترجمة إلى القالب
             ]);
         } catch (\Exception $e) {
             echo "Error: " . $e->getMessage();
@@ -40,7 +45,7 @@ class MorePlacesController {
         return ['latitude' => 30.0444, 'longitude' => 31.2357]; // Cairo, for example
     }
 
-    private function getNearbyCities($userLocation) {
+    public function getNearbyCities($userLocation) {
         $latitude = $userLocation['latitude'];
         $longitude = $userLocation['longitude'];
 
@@ -84,7 +89,6 @@ class MorePlacesController {
             return [];
         }
     }
-
 
     private function getCountries() {
         try {
